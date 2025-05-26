@@ -59,7 +59,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver common = new CommonsMultipartResolver();
-        common.setMaxUploadSizePerFile(52400000);
+        common.setMaxUploadSize(52428800); // 50 MB
         return common;
     }
 
@@ -67,5 +67,7 @@ public class AppConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("/static/");
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:C:/Users/Admin/IdeaProjects/demo3/Session11/src/main/webapp/uploads/");
     }
 }

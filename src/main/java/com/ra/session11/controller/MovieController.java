@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/movies")
 public class MovieController {
-
     @Autowired
     private MovieService movieService;
 
@@ -57,11 +57,20 @@ public class MovieController {
             return "add"; // Quay lại trang nếu có lỗi
         }
 
+        String UPLOAD_DIR = "C:/Users/Admin/IdeaProjects/demo3/Session11/src/main/webapp/uploads";
+        File uploadDir = new File(UPLOAD_DIR);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs(); // Tạo thư mục nếu chưa tồn tại
+        }
 
-        // Xử lý tải lên hình ảnh
-        Map<String, Object> uploadResult = cloudinary.uploader().upload(movieDto.getPoster().getBytes(), ObjectUtils.emptyMap());
         Movie movie = convertMovieDtoToMovie(movieDto);
-        movie.setPoster(uploadResult.get("url").toString());
+
+        // upload lên server
+//        File fileUpload = new File(uploadDir, movieDto.getPoster().getOriginalFilename());
+//        movieDto.getPoster().transferTo(fileUpload);
+//        movie.setPoster("/uploads/" + movieDto.getPoster().getOriginalFilename());
+            Map<String,Object> uploadResult = cloudinary.uploader().upload(movieDto.getPoster().getBytes(),ObjectUtils.emptyMap());
+            movie.setPoster(uploadResult.get("url").toString());
 
         movieService.save(movie);
         redirectAttributes.addFlashAttribute("message", "Movie added successfully.");
